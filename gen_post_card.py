@@ -11,9 +11,30 @@ Rutas relativas: este script asume que se ejecuta desde la raíz del repo,
 con fonts/Inter.ttf y brand/zentiq_icon_512x512_white.png presentes.
 """
 import os
+import re
 from PIL import Image, ImageDraw, ImageFont
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# La fuente de marca (Inter) no trae glifos de emoji a color, y Pillow no hace
+# fallback a otra fuente para dibujarlos: el resultado es un cuadro "sin glifo"
+# roto en vez del emoji. Los quitamos solo del texto que se dibuja en la imagen
+# (los captions de texto para LinkedIn/Facebook sí pueden llevar emojis).
+_EMOJI_PATTERN = re.compile(
+    "["
+    "\U0001F300-\U0001FAFF"  # símbolos y pictogramas variados, emoticones, transporte, etc.
+    "\U00002600-\U000027BF"  # símbolos misceláneos y dingbats
+    "\U0001F1E6-\U0001F1FF"  # banderas (pares de letras regionales)
+    "\U00002190-\U000021FF"  # flechas (algunas usadas como emoji)
+    "\U0000FE0F"              # variation selector-16 (fuerza estilo emoji)
+    "\U0000200D"              # zero-width joiner (emojis compuestos)
+    "]+",
+    flags=re.UNICODE,
+)
+
+
+def strip_emoji(text):
+    return _EMOJI_PATTERN.sub("", text).strip()
 
 # ---------- Paleta de marca ----------
 BG = (10, 10, 15)          # casi negro, con un toque azulado
@@ -50,6 +71,9 @@ def wrap_text(draw, text, font, max_width):
 
 def make_card(tag, headline, subtext, out_path, accent_words=None):
     accent_words = accent_words or []
+    tag = strip_emoji(tag)
+    headline = strip_emoji(headline)
+    subtext = strip_emoji(subtext)
     img = Image.new("RGB", (W, H), BG)
     draw = ImageDraw.Draw(img)
 
