@@ -151,8 +151,8 @@ def make_card(tag, headline, subtext, out_path, accent_words=None):
 if __name__ == "__main__":
     make_card(
         tag="Automatización",
-        headline="Tu WhatsApp puede responder solo, mientras tú atiendes el negocio.",
-        subtext="Un flujo automático simple ya resuelve horarios, catálogo y pedidos básicos — sin que se te vaya ni un cliente por no contestar a tiempo.",
-        out_path=os.path.join(BASE_DIR, "output", "post-ejemplo.png"),
-        accent_words=["solo,", "solo"],
+        headline="El error más caro al automatizar tu negocio: no es la herramienta, son tus datos",
+        subtext="Automatizar un catálogo o inventario desordenado solo hace que el desorden se mueva más rápido. Ordena primero, automatiza después.",
+        out_path=os.path.join(BASE_DIR, "output", "2026-08-19-post.png"),
+        accent_words=["datos"],
     )
